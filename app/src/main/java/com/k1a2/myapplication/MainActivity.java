@@ -302,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     //TODO: 리스트 형태 확인
                     //이 테스트 리스트 참고해서 ㄱ
-                    final String[][] test_list = {{"66", "3,12", "2,8", "13"}, {"80", "4, ", "1, ", "30"}, {"150", "1,9", "1,4", "13"}, {"080", "25, ", "9, ", "30"}};
+                    final String[][] test_list = {{"66", "3,12", "2,8", "13"}, {"80", "4, ", "1, ", "30"}, {"150", "1,9", "1,4", "13"}, {"080", "25, ", "9, ", "30"}, {"999", "22, ", "9, ", "30"}};
 
                     Date startTime = dateFormat.parse("00:00:00");
                     Date endTime = dateFormat.parse("24:00:00");

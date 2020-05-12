@@ -31,14 +31,12 @@ public class BISRequestTask extends AsyncTask<String, String, String[][]> {
         URL url;
         Document doc = null; //정류장 도착정보
 
-
         try {
             url = new URL("http://openapi.gbis.go.kr/ws/rest/busarrivalservice/station?serviceKey=1234567890&stationId=229001658&");
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
             doc = db.parse(new InputSource(url.openStream()));
             doc.getDocumentElement().normalize();
-
 
             ArrayList<String> routeID = new ArrayList<String>();
             ArrayList<String> Location = new ArrayList<String>();
@@ -48,7 +46,6 @@ public class BISRequestTask extends AsyncTask<String, String, String[][]> {
             int length = nodeList.getLength();
 
             for (int i = 0; i < length; i++) {
-
                 Node node = nodeList.item(i);
                 Element fstElmnt = (Element) node;
 
@@ -57,7 +54,6 @@ public class BISRequestTask extends AsyncTask<String, String, String[][]> {
                 if (Value == null){
                     Location.add(" ");
                 }else {
-
                     Location.add(locationNo1.item(0).getChildNodes().item(0).getNodeValue());
                 }
 
@@ -66,7 +62,6 @@ public class BISRequestTask extends AsyncTask<String, String, String[][]> {
                 if (Value2 == null){
                     Location.add(" ");
                 }else {
-
                     Location.add(locationNo2.item(0).getChildNodes().item(0).getNodeValue());
                 }
 
@@ -75,7 +70,6 @@ public class BISRequestTask extends AsyncTask<String, String, String[][]> {
                 if (Value3 == null){
                     PredictTime.add(" ");
                 }else {
-
                     PredictTime.add(predictTime1.item(0).getChildNodes().item(0).getNodeValue());
                 }
 
@@ -84,20 +78,16 @@ public class BISRequestTask extends AsyncTask<String, String, String[][]> {
                 if (Value4 == null){
                     PredictTime.add(" ");
                 }else {
-
                     PredictTime.add(predictTime2.item(0).getChildNodes().item(0).getNodeValue());
                 }
-
 
                 NodeList routeId = fstElmnt.getElementsByTagName("routeId");
                 String Value5 = routeId.item(0).getChildNodes().item(0).getNodeValue();
                 if (Value5 == null){
                     routeID.add(" ");
                 }else {
-
                     routeID.add(routeId.item(0).getChildNodes().item(0).getNodeValue());
                 }
-
 
                 System.out.println("루트ID:" + routeID);
                 System.out.println("도착시간:" + PredictTime);
@@ -117,9 +107,8 @@ public class BISRequestTask extends AsyncTask<String, String, String[][]> {
                 url2 = new URL("http://openapi.gbis.go.kr/ws/rest/busrouteservice/info?serviceKey=1234567890&routeId=" + routeid);
                 DocumentBuilderFactory dbf2 = DocumentBuilderFactory.newInstance();
                 DocumentBuilder db2 = dbf2.newDocumentBuilder();
-                doc2 = db2.parse(new InputSource(url.openStream()));
+                doc2 = db2.parse(new InputSource(url2.openStream()));
                 doc2.getDocumentElement().normalize();
-
 
                 NodeList nodeList2 = doc2.getElementsByTagName("busRouteInfoItem");
                 int length2 = nodeList2.getLength();
@@ -128,29 +117,22 @@ public class BISRequestTask extends AsyncTask<String, String, String[][]> {
                 ArrayList<String> BusType = new ArrayList<String>();
 
                 for (int i = 0; i < length2; i++) {
-
                     Node node = nodeList2.item(i);
                     Element fstElmnt2 = (Element) node;
 
                     NodeList routeName = fstElmnt2.getElementsByTagName("routeName");
                     BusNum.add(routeName.item(0).getChildNodes().item(0).getNodeValue());
 
-
                     NodeList routeTypeCd = fstElmnt2.getElementsByTagName("routeTypeCd");
                     BusType.add(routeTypeCd.item(0).getChildNodes().item(0).getNodeValue());
-
 
                     System.out.println("버스번호:" + BusNum);
                     System.out.println("버스타입:" + BusType);
                 }
-
-
             }
-
         } catch (Exception e) {
             Log.e("ss", e.getMessage());
         }
-
 
         //TODO: 여기다가 파싱 코드 작성
         return new String[0][];
