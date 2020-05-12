@@ -302,8 +302,8 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     final String[][] test_list = {{"66", "3", "2번전", "13"}, {"80", "4", "1번전", "30"}, {"150", "1", "1번전", "13"}, {"080", "25", "9번전", "30"}};
 
-                    Date startTime = dateFormat.parse("14:40:00");
-                    Date endTime = dateFormat.parse("22:09:00");
+                    Date startTime = dateFormat.parse("00:00:00");
+                    Date endTime = dateFormat.parse("24:00:00");
                     Date now = new Date(System.currentTimeMillis());
                     Date convert = dateFormat.parse(dateFormat.format(now));
 
