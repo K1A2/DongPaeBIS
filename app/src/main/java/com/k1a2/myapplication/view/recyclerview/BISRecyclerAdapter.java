@@ -202,25 +202,6 @@ public class BISRecyclerAdapter extends RecyclerView.Adapter<BISRecyclerAdapter.
                 }
             }
         }
-//        for (int b = 0;b < bis.size();b++) {
-//            String[] s = bis.get(b);
-//            String num = s[0];
-//            String pos = s[2];
-//            String min = s[1];
-//            for (int i = 0;i < listViewList.size();i++) {
-//                BISRecyclerItem bbbbb = listViewList.get(i);
-//                if (num.equals(bbbbb.getNum())) {
-//                    final BISRecyclerItem bisRecyclerItem = new BISRecyclerItem();
-//                    bisRecyclerItem.setNum(num);
-//                    bisRecyclerItem.setMin(min);
-//                    bisRecyclerItem.setPos(pos);
-//                    listViewList.set(i, bisRecyclerItem);
-//                    notifyItemChanged(i);
-//                    ht.remove(bisRecyclerItem);
-//                    break;
-//                }
-//            }
-//        }
 
         Set set = ht.entrySet();
         Iterator iterator = set.iterator();

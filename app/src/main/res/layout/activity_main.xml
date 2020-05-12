@@ -135,6 +135,28 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/main_layout_not"
+        android:background="#121926"
+        android:layout_weight="6"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:weightSum="2">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="60dp"
+            android:text="지금은 버스 정보 제공 시간이 아닙니다."/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/main_layout_on"
         android:background="#121926"
         android:layout_weight="6"
         android:layout_width="match_parent"

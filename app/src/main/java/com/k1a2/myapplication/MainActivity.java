@@ -5,7 +5,12 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,11 +20,18 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.k1a2.myapplication.http.BISRequestTask;
+import com.k1a2.myapplication.service.OnService;
 import com.k1a2.myapplication.view.recyclerview.BISRecyclerAdapter;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -29,13 +41,13 @@ public class MainActivity extends AppCompatActivity {
     private TextView text_min1 = null;
     private RecyclerView recycler_bus2 = null;
     private TextView text_min2 = null;
+    private LinearLayout layout_not = null;
+    private LinearLayout layout_yes = null;
 
     private BISRecyclerAdapter bisRecyclerAdapter = null;
     private BISRecyclerAdapter bisRecyclerAdapter2 = null;
 
     private int currentApiVersion = 0;
-
-    private String[][] test_list = {{"66", "3", "2번전", "13"}, {"80", "4", "1번전", "30"}, {"150", "1", "1번전", "13"}, {"080", "25", "9번전", "30"}};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_main);
 
+        layout_not = findViewById(R.id.main_layout_not);
+        layout_yes = findViewById(R.id.main_layout_on);
+
         bisRecyclerAdapter = new BISRecyclerAdapter(this, 0);
         bisRecyclerAdapter2 = new BISRecyclerAdapter(this, 1);
 
@@ -81,24 +96,25 @@ public class MainActivity extends AppCompatActivity {
         recycler_bus2.setLayoutManager(layoutManager2);
         recycler_bus2.setAdapter(bisRecyclerAdapter2);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                String[][] test_list2 = {{"66", "1", "change", "13"}};
-                setBIS(test_list2);
-            }
-        }, 4000);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                String[][] test_list2 = {{"80", "2", "1번전", "13"}, {"66", "1", "9999", "13"}, {"080", "30", "302", "30"}, {"081", "29", "00049", "30"}, {"086", "12", ",,", "30"}, {"999", "8", "00049", "3"}};
-                setBIS(test_list2);
-            }
-        }, 6000);
-
-        setBIS(test_list);
-        setBIS2(test_list);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                String[][] test_list2 = {{"66", "1", "change", "13"}};
+//                setBIS(test_list2);
+//            }
+//        }, 4000);
+//
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                String[][] test_list2 = {{"80", "2", "1번전", "13"}, {"66", "1", "9999", "13"}, {"080", "30", "302", "30"}, {"081", "29", "00049", "30"}, {"086", "12", ",,", "30"}, {"999", "8", "00049", "3"}};
+//                setBIS(test_list2);
+//            }
+//        }, 6000);
+//
+//        setBIS(test_list);
+//        setBIS2(test_list);
+        startBis();
     }
 
     @SuppressWarnings("NewApi")
@@ -261,7 +277,66 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setBIS(String[][] bis) {
+
+    private Timer repeatBis = null;
+
+    public void startBis() {
+//        alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+//        Intent intent = new Intent(this, OnService.class);
+//        PendingIntent pIntent = PendingIntent.getBroadcast(this, 0,intent, 0);
+//
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.set(Calendar.HOUR_OF_DAY, 0);
+//        calendar.set(Calendar.MINUTE, 36);
+//        calendar.set(Calendar.SECOND, 0);
+//        calendar.set(Calendar.MILLISECOND, 0);
+//
+//        // 지정한 시간에 매일 알림
+//        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),  1000*60, pIntent);
+        repeatBis = new Timer();
+        final Context context = this;
+        repeatBis.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+                try {
+                    final String[][] test_list = {{"66", "3", "2번전", "13"}, {"80", "4", "1번전", "30"}, {"150", "1", "1번전", "13"}, {"080", "25", "9번전", "30"}};
+
+                    Date startTime = dateFormat.parse("14:40:00");
+                    Date endTime = dateFormat.parse("22:09:00");
+                    Date now = new Date(System.currentTimeMillis());
+                    Date convert = dateFormat.parse(dateFormat.format(now));
+
+                    if (convert.after(startTime) && convert.before(endTime)) {
+                        ((MainActivity)context).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                layout_yes.setVisibility(View.VISIBLE);
+                                layout_not.setVisibility(View.GONE);
+//                              new BISRequestTask(MainActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR); aysnctask 실
+                                setBIS(test_list);
+                                setBIS2(test_list);
+                            }
+                        });
+                        Log.d("Changed", "바뀜 ");
+                    } else {
+                        ((MainActivity)context).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                layout_yes.setVisibility(View.GONE);
+                                layout_not.setVisibility(View.VISIBLE);
+                            }
+                        });
+                        Log.d("Changed", "표시시간이 아님 ");
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 0, 1000*30);
+    }
+
+    public void setBIS(String[][] bis) {
         ArrayList<String[]> content = new ArrayList<String[]>();
         text_min1.setText("");
         for (int i = 0;i < bis.length;i++) {
@@ -293,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
 //        isLoading = false;
     }
 
-    private void setBIS2(String[][] bis) {
+    public void setBIS2(String[][] bis) {
         ArrayList<String[]> content = new ArrayList<String[]>();
         text_min2.setText("");
         for (int i = 0;i < bis.length;i++) {
