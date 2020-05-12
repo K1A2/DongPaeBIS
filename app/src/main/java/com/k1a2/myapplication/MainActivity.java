@@ -300,7 +300,9 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
                 try {
-                    final String[][] test_list = {{"66", "3", "2번전", "13"}, {"80", "4", "1번전", "30"}, {"150", "1", "1번전", "13"}, {"080", "25", "9번전", "30"}};
+                    //TODO: 리스트 형태 확인
+                    //이 테스트 리스트 참고해서 ㄱ
+                    final String[][] test_list = {{"66", "3,12", "2,8", "13"}, {"80", "4, ", "1, ", "30"}, {"150", "1,9", "1,4", "13"}, {"080", "25, ", "9, ", "30"}};
 
                     Date startTime = dateFormat.parse("00:00:00");
                     Date endTime = dateFormat.parse("24:00:00");
@@ -325,6 +327,8 @@ public class MainActivity extends AppCompatActivity {
                             public void run() {
                                 layout_yes.setVisibility(View.GONE);
                                 layout_not.setVisibility(View.VISIBLE);
+                                text_min1.setText("");
+                                text_min2.setText("");
                             }
                         });
                         Log.d("Changed", "표시시간이 아님 ");
@@ -341,7 +345,7 @@ public class MainActivity extends AppCompatActivity {
         text_min1.setText("");
         for (int i = 0;i < bis.length;i++) {
             content.add(bis[i]);
-            int min = Integer.parseInt(bis[i][1]);
+            int min = Integer.parseInt(bis[i][1].split(",")[0]);
             String num = bis[i][0];
 
             if (min <= 4) {
@@ -373,7 +377,7 @@ public class MainActivity extends AppCompatActivity {
         text_min2.setText("");
         for (int i = 0;i < bis.length;i++) {
             content.add(bis[i]);
-            int min = Integer.parseInt(bis[i][1]);
+            int min = Integer.parseInt(bis[i][1].split(",")[0]);
             String num = bis[i][0];
 
             if (min <= 4) {

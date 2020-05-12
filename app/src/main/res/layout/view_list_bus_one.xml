@@ -28,30 +28,75 @@
             android:text="666666"/>
 
         <LinearLayout
-            android:layout_weight="1"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:textColor="#FFFFFFFF"
-                android:id="@+id/text_bus_time"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:textSize="23dp"
-                android:gravity="bottom"
-                android:text="6분뒤 도착"/>
 
-            <TextView
-                android:textColor="#FFFFFFFF"
-                android:id="@+id/text_bus_now"
+
+            <LinearLayout
                 android:layout_weight="1"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:textSize="20dp"
-                android:gravity="top"
-                android:text="삽다리 정류장"/>
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:textColor="#FFFFFFFF"
+                    android:id="@+id/text_bus_time"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:textSize="23dp"
+                    android:gravity="bottom"
+                    android:text="6분뒤 도착"/>
+
+                <TextView
+                    android:textColor="#FFFFFFFF"
+                    android:id="@+id/text_bus_now"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:textSize="20dp"
+                    android:gravity="top"
+                    android:text="삽다리 정류장"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:textColor="#FFFFFFFF"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:textSize="24dp"
+                    android:gravity="bottom"
+                    android:text="다음 버스"/>
+
+                <TextView
+                    android:textColor="#FFFFFFFF"
+                    android:id="@+id/text_bus_time2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="17dp"
+                    android:gravity="bottom"
+                    android:text="6분뒤 도착"/>
+
+                <TextView
+                    android:textColor="#FFFFFFFF"
+                    android:id="@+id/text_bus_now2"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:textSize="17dp"
+                    android:gravity="top"
+                    android:text="삽다리 정류장"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

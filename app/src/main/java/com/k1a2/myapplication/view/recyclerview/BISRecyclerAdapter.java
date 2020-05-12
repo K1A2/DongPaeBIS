@@ -70,13 +70,42 @@ public class BISRecyclerAdapter extends RecyclerView.Adapter<BISRecyclerAdapter.
         BISRecyclerItem item = listViewList.get(position);
         holder.textNum.setText(item.getNum());
         TextView r = holder.textTime;
-        int min = Integer.parseInt(item.getMin());
-        if (min <= 4) {
-            r.setText("잠시 후 도착");
-        } else {
-            r.setText(item.getMin()  + "분 후 도착");
+        TextView r2 = holder.textTime2;
+        String[] times = item.getMin().split(",");
+        String[] positions = item.getPos().split(",");
+        for (int i = 0;i < 2;i++) {
+            if (i == 0) {
+                int min = Integer.parseInt(times[0]);
+                if (min <= 4) {
+                    r.setText("잠시 후 도착");
+                } else {
+                    r.setText(times[0]  + "분 후 도착");
+                }
+                try {
+                    int pos = Integer.parseInt(positions[0]);
+                    holder.textPos2.setText(positions[0] + "정류장 전");
+                } catch (Exception e) {
+                    holder.textPos2.setText("정보 없음");
+                }
+            } else {
+                try {
+                    int min = Integer.parseInt(times[1]);
+                    if (min <= 4) {
+                        r2.setText("잠시 후 도착");
+                    } else {
+                        r2.setText(times[1]  + "분 후 도착");
+                    }
+                } catch (Exception e) {
+                    r2.setText("정보 없음");
+                }
+                try {
+                    int pos = Integer.parseInt(positions[1]);
+                    holder.textPos2.setText(positions[1] + "정류장 전");
+                } catch (Exception e) {
+                    holder.textPos2.setText("정보 없음");
+                }
+            }
         }
-        holder.textPos.setText(item.getPos());
         switch (Integer.parseInt(item.getType())) {
             case 13:{
 //                int[] location = new int[2];
@@ -131,6 +160,8 @@ public class BISRecyclerAdapter extends RecyclerView.Adapter<BISRecyclerAdapter.
         public TextView textNum = null;
         public TextView textPos = null;
         public TextView textTime = null;
+        public TextView textPos2 = null;
+        public TextView textTime2 = null;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -140,6 +171,8 @@ public class BISRecyclerAdapter extends RecyclerView.Adapter<BISRecyclerAdapter.
             textNum = itemView.findViewById(R.id.text_bus_num);
             textTime = itemView.findViewById(R.id.text_bus_time);
             textPos = itemView.findViewById(R.id.text_bus_now);
+            textTime2 = itemView.findViewById(R.id.text_bus_time2);
+            textPos2 = itemView.findViewById(R.id.text_bus_now2);
         }
     }
 
@@ -219,11 +252,11 @@ public class BISRecyclerAdapter extends RecyclerView.Adapter<BISRecyclerAdapter.
         Collections.sort(listViewList, new Comparator<BISRecyclerItem>() {
             @Override
             public int compare(BISRecyclerItem o1, BISRecyclerItem o2) {
-                if ((Integer.parseInt(o1.getMin())) > (Integer.parseInt(o2.getMin()))) {
+                if ((Integer.parseInt(o1.getMin().split(",")[0])) > (Integer.parseInt(o2.getMin().split(",")[0]))) {
                     return 1;
-                } else if ((Integer.parseInt(o1.getMin())) < (Integer.parseInt(o2.getMin()))) {
+                } else if ((Integer.parseInt(o1.getMin().split(",")[0])) < (Integer.parseInt(o2.getMin().split(",")[0]))) {
                     return -1;
-                } else if (((Integer.parseInt(o1.getMin())) == (Integer.parseInt(o2.getMin())))) {
+                } else if (((Integer.parseInt(o1.getMin().split(",")[0])) == (Integer.parseInt(o2.getMin().split(",")[0])))) {
                     return 0;
                 }
                 return 0;
