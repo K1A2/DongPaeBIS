@@ -208,10 +208,10 @@ public class MainActivity extends AppCompatActivity {
 
                 } else {
                     if (rest == 0) {
-                        periodTime = 30000/page;
+                        periodTime = 10000/page;
                     } else {
                         page += 1;
-                        periodTime = 30000/page;
+                        periodTime = 10000/page;
                     }
                     timer = new Timer(true);
                     timer.scheduleAtFixedRate(new TimerTask() {
@@ -247,10 +247,10 @@ public class MainActivity extends AppCompatActivity {
 
                 } else {
                     if (rest == 0) {
-                        periodTime = 30000/page2;
+                        periodTime = 10000/page2;
                     } else {
                         page2 += 1;
-                        periodTime = 30000/page2;
+                        periodTime = 10000/page2;
                     }
                     timer2 = new Timer(true);
                     timer2.scheduleAtFixedRate(new TimerTask() {
@@ -315,9 +315,9 @@ public class MainActivity extends AppCompatActivity {
                             public void run() {
                                 layout_yes.setVisibility(View.VISIBLE);
                                 layout_not.setVisibility(View.GONE);
-//                              new BISRequestTask(MainActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR); aysnctask 실
-                                setBIS(test_list);
-                                setBIS2(test_list);
+                                new BISRequestTask(MainActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//                                setBIS(test_list);
+//                                setBIS2(test_list);
                             }
                         });
                         Log.d("Changed", "바뀜 ");
@@ -337,70 +337,88 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-        }, 0, 1000*30);
+        }, 0, 1000*10);
     }
 
     public void setBIS(String[][] bis) {
-        ArrayList<String[]> content = new ArrayList<String[]>();
-        text_min1.setText("");
-        for (int i = 0;i < bis.length;i++) {
-            content.add(bis[i]);
-            int min = Integer.parseInt(bis[i][1].split(",")[0]);
-            String num = bis[i][0];
+        TextView textView = findViewById(R.id.main_text1_no);
+        if (bis != null) {
+            textView.setVisibility(View.GONE);
+            recycler_bus1.setVisibility(View.VISIBLE);
+            ArrayList<String[]> content = new ArrayList<String[]>();
+            text_min1.setText("");
+            for (int i = 0;i < bis.length;i++) {
+                content.add(bis[i]);
+                int min = Integer.parseInt(bis[i][1].split(",")[0]);
+                String num = bis[i][0];
 
-            if (min <= 4) {
-                switch (Integer.parseInt(bis[i][3])) {
-                    case 13:{
-                        text_min1.append(num + "번 ");
-                        break;
-                    }
+                if (min <= 4) {
+                    switch (Integer.parseInt(bis[i][3])) {
+                        case 13:{
+                            text_min1.append(num + "번 ");
+                            break;
+                        }
 
-                    case 30:{
-                        text_min1.append(num + "번 ");
-                        break;
-                    }
+                        case 30:{
+                            text_min1.append(num + "번 ");
+                            break;
+                        }
 
-                    default:{
-                        text_min1.append(num + "번 ");
-                        break;
+                        default:{
+                            text_min1.append(num + "번 ");
+                            break;
+                        }
                     }
                 }
             }
-        }
 
-        bisRecyclerAdapter.setBISList(content);
+            bisRecyclerAdapter.setBISList(content);
 //        isLoading = false;
+        } else {
+            text_min1.setText("");
+            textView.setVisibility(View.VISIBLE);
+            recycler_bus1.setVisibility(View.GONE);
+        }
     }
 
     public void setBIS2(String[][] bis) {
-        ArrayList<String[]> content = new ArrayList<String[]>();
-        text_min2.setText("");
-        for (int i = 0;i < bis.length;i++) {
-            content.add(bis[i]);
-            int min = Integer.parseInt(bis[i][1].split(",")[0]);
-            String num = bis[i][0];
+        TextView textView = findViewById(R.id.main_text2_no);
+        if (bis != null) {
+            textView.setVisibility(View.GONE);
+            recycler_bus2.setVisibility(View.VISIBLE);
+            ArrayList<String[]> content = new ArrayList<String[]>();
+            text_min2.setText("");
+            for (int i = 0;i < bis.length;i++) {
+                content.add(bis[i]);
+                int min = Integer.parseInt(bis[i][1].split(",")[0]);
+                String num = bis[i][0];
 
-            if (min <= 4) {
-                switch (Integer.parseInt(bis[i][3])) {
-                    case 13:{
-                        text_min2.append(num + "번 ");
-                        break;
-                    }
+                if (min <= 4) {
+                    switch (Integer.parseInt(bis[i][3])) {
+                        case 13:{
+                            text_min2.append(num + "번 ");
+                            break;
+                        }
 
-                    case 30:{
-                        text_min2.append(num + "번 ");
-                        break;
-                    }
+                        case 30:{
+                            text_min2.append(num + "번 ");
+                            break;
+                        }
 
-                    default:{
-                        text_min2.append(num + "번 ");
-                        break;
+                        default:{
+                            text_min2.append(num + "번 ");
+                            break;
+                        }
                     }
                 }
             }
-        }
 
-        bisRecyclerAdapter2.setBISList(content);
+            bisRecyclerAdapter2.setBISList(content);
 //        isLoading = false;
+        } else {
+            text_min2.setText("");
+            textView.setVisibility(View.VISIBLE);
+            recycler_bus2.setVisibility(View.GONE);
+        }
     }
 }

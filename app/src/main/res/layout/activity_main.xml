@@ -33,12 +33,12 @@
                     android:textSize="30dp"
                     android:fontFamily="@font/scdream5"/>
 
-                <TextClock
-                    android:textSize="50dp"
-                    android:fontFamily="@font/scdream5"
-                    android:format12Hour="hh:mm:ss a"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+<!--                <TextClock-->
+<!--                    android:textSize="50dp"-->
+<!--                    android:fontFamily="@font/scdream5"-->
+<!--                    android:format12Hour="hh:mm:ss a"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"/>-->
 
             </LinearLayout>
 
@@ -166,8 +166,26 @@
         android:paddingRight="10dp"
         android:weightSum="2">
 
+        <TextView
+            android:id="@+id/main_text1_no"
+            android:textSize="28dp"
+            android:gravity="center"
+            android:text="버스 정보가 없습니다. "
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/main_recycler_bus1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/main_text2_no"
+            android:textSize="28dp"
+            android:gravity="center"
+            android:text="버스 정보가 없습니다. "
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"/>

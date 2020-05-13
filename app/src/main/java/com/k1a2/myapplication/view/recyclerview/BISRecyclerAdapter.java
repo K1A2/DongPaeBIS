@@ -83,9 +83,9 @@ public class BISRecyclerAdapter extends RecyclerView.Adapter<BISRecyclerAdapter.
                 }
                 try {
                     int pos = Integer.parseInt(positions[0]);
-                    holder.textPos2.setText(positions[0] + "정류장 전");
+                    holder.textPos.setText(positions[0] + "정류장 전");
                 } catch (Exception e) {
-                    holder.textPos2.setText("정보 없음");
+                    holder.textPos.setText("정보 없음");
                 }
             } else {
                 try {
