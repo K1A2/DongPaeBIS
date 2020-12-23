@@ -5,27 +5,36 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.k1a2.myapplication.http.BISRequestTask;
+import com.k1a2.myapplication.http.RequestWeather;
 import com.k1a2.myapplication.service.OnService;
 import com.k1a2.myapplication.view.recyclerview.BISRecyclerAdapter;
+
+import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,21 +46,26 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView recycler_bus1 = null;
-    private TextView text_min1 = null;
-    private RecyclerView recycler_bus2 = null;
-    private TextView text_min2 = null;
-    private LinearLayout layout_not = null;
-    private LinearLayout layout_yes = null;
+    private RecyclerView recycler_bus1 = null; //왼쪽 버스 정보 (힌울공원 방면)
+    private TextView text_min1 = null; //왼쪽 잠시후 도착 (힌울공원 방면)
+    private RecyclerView recycler_bus2 = null; //오른쪽 버스 정보 (동패중 방면)
+    private TextView text_min2 = null; //오른쪽 잠시후 도착 (동패중 방면)
 
-    private BISRecyclerAdapter bisRecyclerAdapter = null;
-    private BISRecyclerAdapter bisRecyclerAdapter2 = null;
+    private BISRecyclerAdapter bisRecyclerAdapter = null; //왼쪽 버스 정보 리사이클러 어댑터
+    private BISRecyclerAdapter bisRecyclerAdapter2 = null; //오른쪽 버스 정보 리사이클러 어댑터
+
+    private PowerManager powerManager;
+
+    private PowerManager.WakeLock wakeLock;
 
     private int currentApiVersion = 0;
 
+    @SuppressLint("InvalidWakeLockTag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 전체 화면 처리
         currentApiVersion = android.os.Build.VERSION.SDK_INT;
         final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -59,8 +73,6 @@ public class MainActivity extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-
-        // This work only for android 4.4+
         if(currentApiVersion >= Build.VERSION_CODES.KITKAT) {
             getWindow().getDecorView().setSystemUiVisibility(flags);
             final View decorView = getWindow().getDecorView();
@@ -74,11 +86,15 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
         }
-        setContentView(R.layout.activity_main);
 
-        layout_not = findViewById(R.id.main_layout_not);
-        layout_yes = findViewById(R.id.main_layout_on);
+        setContentView(R.layout.layout_main_v2);
 
+        //화면 꺼지지 않도록 처리
+        powerManager = (PowerManager)getSystemService(Context.POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "WAKELOCK");
+        wakeLock.acquire();
+
+        //각각 리사이클러뷰에 어댑터 생성 및 연결
         bisRecyclerAdapter = new BISRecyclerAdapter(this, 0);
         bisRecyclerAdapter2 = new BISRecyclerAdapter(this, 1);
 
@@ -96,25 +112,35 @@ public class MainActivity extends AppCompatActivity {
         recycler_bus2.setLayoutManager(layoutManager2);
         recycler_bus2.setAdapter(bisRecyclerAdapter2);
 
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                String[][] test_list2 = {{"66", "1", "change", "13"}};
-//                setBIS(test_list2);
-//            }
-//        }, 4000);
-//
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                String[][] test_list2 = {{"80", "2", "1번전", "13"}, {"66", "1", "9999", "13"}, {"080", "30", "302", "30"}, {"081", "29", "00049", "30"}, {"086", "12", ",,", "30"}, {"999", "8", "00049", "3"}};
-//                setBIS(test_list2);
-//            }
-//        }, 6000);
-//
-//        setBIS(test_list);
-//        setBIS2(test_list);
+        //BIS 업데이트 시작
         startBis();
+
+        //날씨 정부 10분마다 업데이트
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                new RequestWeather(MainActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+        },0, 1000*60*10);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        wakeLock.release();
+    }
+
+    public void setWeatherInfo(Bitmap bitmap, Double currentTemp, Double currentLike, Double humidity, Double wind) {
+        ImageView imageView = findViewById(R.id.main_img_weather);
+        TextView textTemp = findViewById(R.id.main_text_temp);
+        TextView textTemplike = findViewById(R.id.main_text_templike);
+        TextView textHum = findViewById(R.id.main_text_hmid);
+        TextView textWind = findViewById(R.id.main_text_wind);
+        if (bitmap != null) imageView.setImageBitmap(bitmap);
+        textTemp.setText(String.format("%.2f", currentTemp)+ "°C");
+        textWind.setText(String.format("%.2f", wind) + "m/s");
+        textTemplike.setText(String.format("%.2f", currentLike)+ "°C");
+        textHum.setText(String.format("%.2f", humidity)+ "%");
     }
 
     @SuppressWarnings("NewApi")
@@ -140,7 +166,10 @@ public class MainActivity extends AppCompatActivity {
             public void onGlobalLayout()  {
                 recycler_bus1.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 int height = recycler_bus1.getHeight();
-                bisRecyclerAdapter.setItemHeight(height);
+
+                DisplayMetrics metrics = new DisplayMetrics();
+                getWindowManager().getDefaultDisplay().getMetrics(metrics);
+                bisRecyclerAdapter.setItemHeight(height, metrics);
 
                 for (int i = 0;i < bisRecyclerAdapter.getItemCount();i++) {
                     View viewItem = recycler_bus1.getLayoutManager().findViewByPosition(i);
@@ -154,7 +183,10 @@ public class MainActivity extends AppCompatActivity {
             public void onGlobalLayout()  {
                 recycler_bus2.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 int height = recycler_bus2.getHeight();
-                bisRecyclerAdapter2.setItemHeight(height);
+
+                DisplayMetrics metrics = new DisplayMetrics();
+                getWindowManager().getDefaultDisplay().getMetrics(metrics);
+                bisRecyclerAdapter2.setItemHeight(height, metrics);
 
                 for (int i = 0;i < bisRecyclerAdapter2.getItemCount();i++) {
                     View viewItem = recycler_bus2.getLayoutManager().findViewByPosition(i);
@@ -281,18 +313,6 @@ public class MainActivity extends AppCompatActivity {
     private Timer repeatBis = null;
 
     public void startBis() {
-//        alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-//        Intent intent = new Intent(this, OnService.class);
-//        PendingIntent pIntent = PendingIntent.getBroadcast(this, 0,intent, 0);
-//
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.set(Calendar.HOUR_OF_DAY, 0);
-//        calendar.set(Calendar.MINUTE, 36);
-//        calendar.set(Calendar.SECOND, 0);
-//        calendar.set(Calendar.MILLISECOND, 0);
-//
-//        // 지정한 시간에 매일 알림
-//        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),  1000*60, pIntent);
         repeatBis = new Timer();
         final Context context = this;
         repeatBis.scheduleAtFixedRate(new TimerTask() {
@@ -300,9 +320,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
                 try {
-                    //TODO: 리스트 형태 확인
-                    //이 테스트 리스트 참고해서 ㄱ
-                    final String[][] test_list = {{"66", "3,12", "2,8", "13"}, {"80", "4, ", "1, ", "30"}, {"150", "1,9", "1,4", "13"}, {"080", "25, ", "9, ", "30"}, {"999", "22, ", "9, ", "30"}};
+                    //TODO: 리스트 형태 확인\
 
                     Date startTime = dateFormat.parse("00:00:00");
                     Date endTime = dateFormat.parse("24:00:00");
@@ -313,8 +331,8 @@ public class MainActivity extends AppCompatActivity {
                         ((MainActivity)context).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                layout_yes.setVisibility(View.VISIBLE);
-                                layout_not.setVisibility(View.GONE);
+//                                layout_yes.setVisibility(View.VISIBLE);
+//                                layout_not.setVisibility(View.GONE);
                                 new BISRequestTask(MainActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 //                                setBIS(test_list);
 //                                setBIS2(test_list);
@@ -325,8 +343,8 @@ public class MainActivity extends AppCompatActivity {
                         ((MainActivity)context).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                layout_yes.setVisibility(View.GONE);
-                                layout_not.setVisibility(View.VISIBLE);
+//                                layout_yes.setVisibility(View.GONE);
+//                                layout_not.setVisibility(View.VISIBLE);
                                 text_min1.setText("");
                                 text_min2.setText("");
                             }
@@ -342,17 +360,25 @@ public class MainActivity extends AppCompatActivity {
 
     public void setBIS(String[][] bis) {
         TextView textView = findViewById(R.id.main_text1_no);
+        text_min1.setText("");
         if (bis != null) {
+            if (bis.length == 0) {
+                textView.setVisibility(View.VISIBLE);
+                recycler_bus1.setVisibility(View.GONE);
+                return;
+            }
             textView.setVisibility(View.GONE);
             recycler_bus1.setVisibility(View.VISIBLE);
             ArrayList<String[]> content = new ArrayList<String[]>();
-            text_min1.setText("");
+
+            int c0 = 0;
             for (int i = 0;i < bis.length;i++) {
                 content.add(bis[i]);
                 int min = Integer.parseInt(bis[i][1].split(",")[0]);
                 String num = bis[i][0];
 
                 if (min <= 4) {
+                    c0+=1;
                     switch (Integer.parseInt(bis[i][3])) {
                         case 13:{
                             text_min1.append(num + "번 ");
@@ -371,6 +397,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
+            if (c0 == 0) {
+                text_min1.setText("잠시후 도착하는 버스가 없습니다.");
+            }
 
             bisRecyclerAdapter.setBISList(content);
 //        isLoading = false;
@@ -383,17 +412,25 @@ public class MainActivity extends AppCompatActivity {
 
     public void setBIS2(String[][] bis) {
         TextView textView = findViewById(R.id.main_text2_no);
+        text_min2.setText("");
         if (bis != null) {
+            if (bis.length == 0) {
+                textView.setVisibility(View.VISIBLE);
+                recycler_bus2.setVisibility(View.GONE);
+                return;
+            }
             textView.setVisibility(View.GONE);
             recycler_bus2.setVisibility(View.VISIBLE);
             ArrayList<String[]> content = new ArrayList<String[]>();
-            text_min2.setText("");
+
+            int c0 = 0;
             for (int i = 0;i < bis.length;i++) {
                 content.add(bis[i]);
                 int min = Integer.parseInt(bis[i][1].split(",")[0]);
                 String num = bis[i][0];
 
                 if (min <= 4) {
+                    c0 += 1;
                     switch (Integer.parseInt(bis[i][3])) {
                         case 13:{
                             text_min2.append(num + "번 ");
@@ -411,6 +448,9 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
+            }
+            if (c0 == 0) {
+                text_min2.setText("잠시후 도착하는 버스가 없습니다.");
             }
 
             bisRecyclerAdapter2.setBISList(content);

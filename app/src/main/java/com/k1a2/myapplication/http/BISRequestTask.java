@@ -31,10 +31,10 @@ public class BISRequestTask extends AsyncTask<String, String, String[][][]> {
     protected String[][][] doInBackground(String... strings) {
 
         ArrayList<String[][]> returnList = new ArrayList<>();
-        returnList.add(getBusInformation("229001394"));//공원
-        returnList.add(getBusInformation("229001658"));//삽다리
-//        returnList.add(getBusInformation("229001474"));//공원
-//        returnList.add(getBusInformation("229001473"));//삽다리
+//        returnList.add(getBusInformation("229001394"));//공원
+//        returnList.add(getBusInformation("229001658"));//삽다리
+        returnList.add(getBusInformation("229001474"));//공원
+        returnList.add(getBusInformation("229001473"));//삽다리
 
         String[][][] result = new String[2][][];
         result[0] = returnList.get(0);

@@ -4,59 +4,64 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:cardCornerRadius="15dp"
-    app:cardBackgroundColor="#00FFFFFF"
+    app:cardCornerRadius="10dp"
+    app:cardBackgroundColor="#FFFFFFFF"
+    app:cardElevation="3dp"
     android:id="@+id/list_content_main"
     app:cardUseCompatPadding="true">
 
     <LinearLayout
-        android:background="@drawable/background_main"
         android:orientation="horizontal"
+        android:weightSum="3"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TextView
-            android:textColor="#FFFFFFFF"
+            android:textStyle="bold"
+            android:layout_weight="1"
             android:id="@+id/text_bus_num"
             android:paddingLeft="30dp"
             android:paddingRight="30dp"
             android:fontFamily="@font/scdream5"
-            android:layout_width="wrap_content"
-            android:textSize="40dp"
+            android:layout_width="0dp"
+            android:textSize="50dp"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="666666"/>
 
         <LinearLayout
+            android:weightSum="2"
+            android:layout_weight="2"
             android:orientation="horizontal"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent">
-
-
 
             <LinearLayout
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:textColor="#FFFFFFFF"
+                    android:textStyle="bold"
+                    android:textColor="#C20F0F"
                     android:id="@+id/text_bus_time"
                     android:layout_weight="1"
+                    android:fontFamily="@font/scdream9"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:textSize="23dp"
+                    android:textSize="40dp"
                     android:gravity="bottom"
                     android:text="6분뒤 도착"/>
 
                 <TextView
-                    android:textColor="#FFFFFFFF"
+                    android:textStyle="bold"
                     android:id="@+id/text_bus_now"
                     android:layout_weight="1"
+                    android:fontFamily="@font/scdream9"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:textSize="20dp"
+                    android:textSize="37dp"
                     android:gravity="top"
                     android:text="삽다리 정류장"/>
 
@@ -65,34 +70,31 @@
             <LinearLayout
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:textColor="#FFFFFFFF"
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:textSize="24dp"
+                    android:textSize="30dp"
                     android:gravity="bottom"
                     android:text="다음 버스"/>
 
                 <TextView
-                    android:textColor="#FFFFFFFF"
                     android:id="@+id/text_bus_time2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="17dp"
+                    android:textSize="23dp"
                     android:gravity="bottom"
                     android:text="6분뒤 도착"/>
 
                 <TextView
-                    android:textColor="#FFFFFFFF"
                     android:id="@+id/text_bus_now2"
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:textSize="17dp"
+                    android:textSize="23dp"
                     android:gravity="top"
                     android:text="삽다리 정류장"/>
 

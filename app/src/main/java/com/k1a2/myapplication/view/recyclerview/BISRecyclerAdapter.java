@@ -73,10 +73,13 @@ public class BISRecyclerAdapter extends RecyclerView.Adapter<BISRecyclerAdapter.
         TextView r2 = holder.textTime2;
         String[] times = item.getMin().split(",");
         String[] positions = item.getPos().split(",");
+        r.setTextColor(Color.BLACK);
+        r2.setTextColor(Color.BLACK);
         for (int i = 0;i < 2;i++) {
             if (i == 0) {
                 int min = Integer.parseInt(times[0]);
                 if (min <= 4) {
+                    r.setTextColor(Color.parseColor("#f54576"));
                     r.setText("잠시 후 도착");
                 } else {
                     r.setText(times[0]  + "분 후 도착");
@@ -91,6 +94,7 @@ public class BISRecyclerAdapter extends RecyclerView.Adapter<BISRecyclerAdapter.
                 try {
                     int min = Integer.parseInt(times[1]);
                     if (min <= 4) {
+                        r2.setTextColor(Color.parseColor("#f54576"));
                         r2.setText("잠시 후 도착");
                     } else {
                         r2.setText(times[1]  + "분 후 도착");
@@ -114,7 +118,7 @@ public class BISRecyclerAdapter extends RecyclerView.Adapter<BISRecyclerAdapter.
 //                        new int[]{Color.rgb(8, 174, 234),Color.rgb(42, 245, 152)},
 //                        new float[]{0, 1}, Shader.TileMode.CLAMP);
 //                holder.textNum.getPaint().setShader(textShader);
-                holder.textNum.setTextColor(Color.rgb(8, 174, 234));
+                holder.textNum.setTextColor(Color.rgb(28, 116, 199));
                 break;
             }
 
@@ -123,12 +127,12 @@ public class BISRecyclerAdapter extends RecyclerView.Adapter<BISRecyclerAdapter.
 //                        new int[]{Color.rgb(250, 217, 97),Color.rgb(247, 107, 28)},
 //                        new float[]{0, 1}, Shader.TileMode.CLAMP);
 //                holder.textNum.getPaint().setShader(textShader);
-                holder.textNum.setTextColor(Color.rgb(250, 217, 97));
+                holder.textNum.setTextColor(Color.rgb(227, 141, 20));
                 break;
             }
 
             default:{
-                holder.textNum.setTextColor(Color.WHITE);
+                holder.textNum.setTextColor(Color.BLACK);
                 break;
             }
         }
@@ -267,8 +271,8 @@ public class BISRecyclerAdapter extends RecyclerView.Adapter<BISRecyclerAdapter.
         ((MainActivity)context).startAutoScroll(vv);
     }
 
-    public void setItemHeight(int height) {
-        this.itemHeight = (height - 5)/4;
+    public void setItemHeight(int height, DisplayMetrics metrics) {
+        this.itemHeight = (int) (height - 4)/4;
     }
 
     public void addItem(BISRecyclerItem gradeRecyclerItem) {
